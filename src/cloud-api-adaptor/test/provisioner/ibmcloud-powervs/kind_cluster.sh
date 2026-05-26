@@ -1,0 +1,1 @@
+../../../byom/e2e/kind_cluster.sh
