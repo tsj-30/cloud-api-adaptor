@@ -5,12 +5,17 @@ package ibmcloud_powervs // IBMCloudPowerVSProvisioner implements the CloudProvi
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"strconv"
 
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/e2e-framework/klient/k8s"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 
-	byomprov "github.com/confidential-containers/cloud-api-adaptor/src/cloud-api-adaptor/test/provisioner/byom"
 	pv "github.com/confidential-containers/cloud-api-adaptor/src/cloud-api-adaptor/test/provisioner"
+	byomprov "github.com/confidential-containers/cloud-api-adaptor/src/cloud-api-adaptor/test/provisioner/byom"
 )
 
 // IBMCloudPowerVSProvisioner implements CloudProvisioner for IBM Cloud PowerVS.
@@ -35,7 +40,38 @@ type IBMCloudPowerVSProvisioner struct {
 }
 
 func (p *IBMCloudPowerVSProvisioner) CreateCluster(ctx context.Context, cfg *envconf.Config) error {
-	return p.ByomProvisioner.CreateCluster(ctx, cfg)
+	if err := p.ByomProvisioner.CreateCluster(ctx, cfg); err != nil {
+		return err
+	}
+
+	return addWorkerLabelToConfiguredNode(ctx, cfg)
+}
+
+func addWorkerLabelToConfiguredNode(ctx context.Context, cfg *envconf.Config) error {
+	client, err := cfg.NewClient()
+	if err != nil {
+		return err
+	}
+
+	nodelist := &corev1.NodeList{}
+	if err := client.Resources().List(ctx, nodelist); err != nil {
+		return err
+	}
+
+	for _, node := range nodelist.Items {
+		if node.Name == byomprov.ByomProps.WorkerNodeName {
+			payload := []pv.PatchLabel{{
+				Op: "add",
+				// "/" must be written as ~1 (see RFC 6901)
+				Path:  "/metadata/labels/node.kubernetes.io~1worker",
+				Value: "",
+			}}
+			payloadBytes, _ := json.Marshal(payload)
+			return client.Resources().Patch(ctx, &node, k8s.Patch{PatchType: types.JSONPatchType, Data: payloadBytes})
+		}
+	}
+
+	return fmt.Errorf("worker node %q not found", byomprov.ByomProps.WorkerNodeName)
 }
 
 func (p *IBMCloudPowerVSProvisioner) DeleteCluster(ctx context.Context, cfg *envconf.Config) error {
