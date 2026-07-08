@@ -8,13 +8,9 @@ package ibmcloud_powervs
 import (
 	"context"
 	"fmt"
-	"os"
-	"os/exec"
 	"path/filepath"
 
 	pv "github.com/confidential-containers/cloud-api-adaptor/src/cloud-api-adaptor/test/provisioner"
-	byomprov "github.com/confidential-containers/cloud-api-adaptor/src/cloud-api-adaptor/test/provisioner/byom"
-	log "github.com/sirupsen/logrus"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
 
@@ -47,49 +43,9 @@ func (ic *IBMCloudPowerVSInstallChart) GetHelm() *pv.Helm {
 // Install creates the SSH key secret required by CAA, then installs the Helm
 // chart and waits for the worker node to receive the kata-runtime label.
 func (ic *IBMCloudPowerVSInstallChart) Install(ctx context.Context, cfg *envconf.Config) error {
-	if err := ic.createSSHKeySecret(ctx, cfg); err != nil {
-		return fmt.Errorf("failed to create SSH key secret: %w", err)
-	}
-
 	if err := ic.Helm.Install(ctx, cfg); err != nil {
 		return err
 	}
-	return nil
-}
-
-// createSSHKeySecret creates the ssh-key-secret in the CAA namespace from the
-// SSH key paths configured in the BYOM properties.
-func (ic *IBMCloudPowerVSInstallChart) createSSHKeySecret(ctx context.Context, cfg *envconf.Config) error {
-	privKeyPath := byomprov.ByomProps.SSHSecretPrivKeyPath
-	pubKeyPath := byomprov.ByomProps.SSHSecretPubKeyPath
-
-	if privKeyPath == "" || pubKeyPath == "" {
-		return fmt.Errorf("SSH_SECRET_PRIV_KEY_PATH and SSH_SECRET_PUB_KEY_PATH must be set")
-	}
-
-	// Ensure the namespace exists before creating the secret.
-	if err := pv.CreateAndWaitForNamespace(ctx, cfg.Client(), ic.Helm.Namespace); err != nil {
-		return fmt.Errorf("failed to create namespace: %w", err)
-	}
-
-	secretName := "ssh-key-secret"
-	log.Infof("Creating SSH key secret from %s and %s", privKeyPath, pubKeyPath)
-
-	args := []string{
-		"create", "secret", "generic", secretName,
-		"--from-file=id_rsa=" + privKeyPath,
-		"--from-file=id_rsa.pub=" + pubKeyPath,
-		"-n", ic.Helm.Namespace,
-	}
-	cmd := exec.Command("kubectl", args...)
-	cmd.Env = append(os.Environ(), "KUBECONFIG="+cfg.KubeconfigFile())
-	stdoutStderr, err := cmd.CombinedOutput()
-	log.Tracef("%v, output: %s", cmd, stdoutStderr)
-	if err != nil {
-		return fmt.Errorf("failed to create ssh-key-secret: %w, output: %s", err, string(stdoutStderr))
-	}
-
-	log.Infof("Created ssh-key-secret successfully")
 	return nil
 }
 
