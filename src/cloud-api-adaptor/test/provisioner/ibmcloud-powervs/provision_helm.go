@@ -43,10 +43,7 @@ func (ic *IBMCloudPowerVSInstallChart) GetHelm() *pv.Helm {
 // Install creates the SSH key secret required by CAA, then installs the Helm
 // chart and waits for the worker node to receive the kata-runtime label.
 func (ic *IBMCloudPowerVSInstallChart) Install(ctx context.Context, cfg *envconf.Config) error {
-	if err := ic.Helm.Install(ctx, cfg); err != nil {
-		return err
-	}
-	return nil
+	return ic.Helm.Install(ctx, cfg)
 }
 
 func (ic *IBMCloudPowerVSInstallChart) Uninstall(ctx context.Context, cfg *envconf.Config) error {

@@ -21,12 +21,10 @@ type IBMCloudPowerVSProvisioner struct {
 	byom *byomprov.ByomProvisioner
 
 	IBMCloudPowerVSAPIKey    string
-	PowerVSRegion            string
 	PowerVSZone              string
 	PowerVSServiceInstanceId string
 	PowerVSImageID           string
 	PowerVSNetworkID         string
-	PowerVSNetworkName       string
 	PowerVSSSHKeyName        string
 	PowerVSSystemType        string
 	PowerVSMemory            string
@@ -63,24 +61,17 @@ func (p *IBMCloudPowerVSProvisioner) DeleteVPC(ctx context.Context, cfg *envconf
 func (p *IBMCloudPowerVSProvisioner) GetProperties(ctx context.Context, cfg *envconf.Config) map[string]string {
 	return map[string]string{
 		"IBMCLOUD_API_KEY":            p.IBMCloudPowerVSAPIKey,
-		"POWERVS_REGION":              p.PowerVSRegion,
 		"POWERVS_ZONE":                p.PowerVSZone,
 		"POWERVS_SERVICE_INSTANCE_ID": p.PowerVSServiceInstanceId,
 		"POWERVS_IMAGE_ID":            p.PowerVSImageID,
 		"POWERVS_NETWORK_ID":          p.PowerVSNetworkID,
-		"POWERVS_NETWORK_NAME":        p.PowerVSNetworkName,
 		"POWERVS_SSH_KEY_NAME":        p.PowerVSSSHKeyName,
 		"POWERVS_SYSTEM_TYPE":         p.PowerVSSystemType,
 		"POWERVS_MEMORY":              p.PowerVSMemory,
 		"POWERVS_PROCESSOR_TYPE":      p.PowerVSProcessorType,
 		"POWERVS_PROCESSORS":          p.PowerVSProcessors,
 		// BYOM fields required by the Helm chart's SSH key secret and worker-node logic
-		"SSH_SECRET_PRIV_KEY_PATH": byomprov.ByomProps.SSHSecretPrivKeyPath,
-		"SSH_SECRET_PUB_KEY_PATH":  byomprov.ByomProps.SSHSecretPubKeyPath,
-		"SSH_USERNAME":             byomprov.ByomProps.SSHUsername,
-		"CLUSTER_NAME":             byomprov.ByomProps.ClusterName,
-		"WORKER_NODE_NAME":         byomprov.ByomProps.WorkerNodeName,
-		"CONTAINER_RUNTIME":        byomprov.ByomProps.ContainerRuntime,
+		"CLUSTER_NAME": byomprov.ByomProps.ClusterName,
 	}
 }
 
@@ -107,12 +98,10 @@ func NewIBMCloudPowerVSProvisioner(properties map[string]string) (pv.CloudProvis
 	return &IBMCloudPowerVSProvisioner{
 		byom:                     byomBase.(*byomprov.ByomProvisioner),
 		IBMCloudPowerVSAPIKey:    properties["IBMCLOUD_API_KEY"],
-		PowerVSRegion:            properties["POWERVS_REGION"],
 		PowerVSZone:              properties["POWERVS_ZONE"],
 		PowerVSServiceInstanceId: properties["POWERVS_SERVICE_INSTANCE_ID"],
 		PowerVSImageID:           properties["POWERVS_IMAGE_ID"],
 		PowerVSNetworkID:         properties["POWERVS_NETWORK_ID"],
-		PowerVSNetworkName:       properties["POWERVS_NETWORK_NAME"],
 		PowerVSSSHKeyName:        properties["POWERVS_SSH_KEY_NAME"],
 		PowerVSSystemType:        properties["POWERVS_SYSTEM_TYPE"],
 		PowerVSMemory:            memory,

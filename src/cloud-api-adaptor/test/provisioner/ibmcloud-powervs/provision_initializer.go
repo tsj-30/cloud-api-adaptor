@@ -4,7 +4,6 @@
 package ibmcloud_powervs
 
 import (
-	"errors"
 	"os"
 	"strings"
 
@@ -13,7 +12,6 @@ import (
 )
 
 type IBMPowerVSProperties struct {
-	IBMCloudProvider         string
 	ApiKey                   string
 	TestPodVMImage           string
 	PowerVSZone              string
@@ -24,8 +22,6 @@ type IBMPowerVSProperties struct {
 	PowerVSSystemType        string
 	PowerVSMemory            string
 	PowerVSProcessors        string
-	RetryOnTFFailure         int
-	SSHPrivateKeyPath        string
 }
 
 var IBMPowerVSProps = &IBMPowerVSProperties{}
@@ -33,7 +29,6 @@ var IBMPowerVSProps = &IBMPowerVSProperties{}
 func InitIBMCloudProperties(properties map[string]string) error {
 
 	IBMPowerVSProps = &IBMPowerVSProperties{
-		IBMCloudProvider:         properties["IBMCLOUD_PROVIDER"],
 		ApiKey:                   properties["IBMCLOUD_API_KEY"],
 		PowerVSRegion:            properties["POWERVS_REGION"],
 		PowerVSZone:              properties["POWERVS_ZONE"],
@@ -41,24 +36,12 @@ func InitIBMCloudProperties(properties map[string]string) error {
 		PowerVSSSHKeyName:        properties["POWERVS_SSH_KEY_NAME"],
 		PowerVSMemory:            properties["POWERVS_MEMORY"],
 		PowerVSProcessors:        properties["POWERVS_PROCESSORS"],
-		SSHPrivateKeyPath:        properties["SSH_PRIVATE_KEY_PATH"],
-	}
-
-	if len(IBMPowerVSProps.IBMCloudProvider) <= 0 {
-		IBMPowerVSProps.IBMCloudProvider = "ibmcloud-powervs"
-	}
-
-	if len(IBMPowerVSProps.PowerVSZone) <= 0 {
-		log.Warn("[warning] POWERVS_ZONE was not set.")
 	}
 
 	needProvisionStr := os.Getenv("TEST_PROVISION")
 	if strings.EqualFold(needProvisionStr, "yes") || strings.EqualFold(needProvisionStr, "true") || pv.Action == "uploadimage" {
 		if len(IBMPowerVSProps.ApiKey) <= 0 {
 			log.Warn("[warning] IBMCLOUD_API_KEY was not set. Depending on environment variable.")
-		}
-		if len(IBMPowerVSProps.PowerVSRegion) <= 0 {
-			return errors.New("REGION was not set.")
 		}
 	}
 	return nil
