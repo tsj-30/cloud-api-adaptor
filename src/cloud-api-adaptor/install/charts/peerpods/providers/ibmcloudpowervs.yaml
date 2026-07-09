@@ -61,7 +61,7 @@ providerConfigs:
 
     # ID of the boot image
     # (required)
-    POWERVS_IMAGE_ID: ""
+    POWERVS_IMAGE_ID: "03b9decf-cefa-4496-8a78-d74d312fef2f"
 
     # Amount of memory in GB
     # (default: "2")
@@ -69,7 +69,7 @@ providerConfigs:
 
     # ID of the network instance
     # (required)
-    POWERVS_NETWORK_ID: ""
+    POWERVS_NETWORK_ID: "61907ac8-8f37-49a3-8ad0-b4159c301ca6"
 
     # Number of processors allocated
     # (default: "0.5")
@@ -81,11 +81,11 @@ providerConfigs:
 
     # ID of the PowerVS Service Instance
     # (required)
-    POWERVS_SERVICE_INSTANCE_ID: ""
+    POWERVS_SERVICE_INSTANCE_ID: "crn:v1:bluemix:public:power-iaas:osa21:a/c265c8cefda241ca9c107adcbbacaa84:10b1000b-da8d-4e18-ad1f-6b2a56a8c130::"
 
     # Name of the SSH Key
     # (default: "")
-    # POWERVS_SSH_KEY_NAME: ""
+    POWERVS_SSH_KEY_NAME: "tsj_ssh_e2e_vm"
 
     # Name of the system type
     # (default: "s922")
@@ -93,7 +93,7 @@ providerConfigs:
 
     # PowerVS zone name
     # (required)
-    POWERVS_ZONE: ""
+    POWERVS_ZONE: "osa21"
 
     # Maximum timeout in minutes for establishing agent proxy connection
     # (default: "")
@@ -118,4 +118,3 @@ providerConfigs:
     # VXLAN UDP port number (VXLAN tunnel mode only
     # (default: "")
     # VXLAN_PORT: ""
-

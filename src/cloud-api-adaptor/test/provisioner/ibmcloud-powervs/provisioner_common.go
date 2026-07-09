@@ -30,6 +30,9 @@ type IBMCloudPowerVSProvisioner struct {
 	PowerVSMemory            string
 	PowerVSProcessorType     string
 	PowerVSProcessors        string
+	UsePublicIP              string
+	ForwarderPort            string
+	ProxyTimout 			 string
 }
 
 func (p *IBMCloudPowerVSProvisioner) CreateCluster(ctx context.Context, cfg *envconf.Config) error {
@@ -70,6 +73,9 @@ func (p *IBMCloudPowerVSProvisioner) GetProperties(ctx context.Context, cfg *env
 		"POWERVS_MEMORY":              p.PowerVSMemory,
 		"POWERVS_PROCESSOR_TYPE":      p.PowerVSProcessorType,
 		"POWERVS_PROCESSORS":          p.PowerVSProcessors,
+		"USE_PUBLIC_IP":               p.UsePublicIP,
+		"FORWARDER_PORT":              p.ForwarderPort,
+		"PROXY_TIMEOUT":			   p.ProxyTimout, 
 		// BYOM fields required by the Helm chart's SSH key secret and worker-node logic
 		"CLUSTER_NAME": byomprov.ByomProps.ClusterName,
 	}
@@ -107,6 +113,9 @@ func NewIBMCloudPowerVSProvisioner(properties map[string]string) (pv.CloudProvis
 		PowerVSMemory:            memory,
 		PowerVSProcessorType:     properties["POWERVS_PROCESSOR_TYPE"],
 		PowerVSProcessors:        properties["POWERVS_PROCESSORS"],
+		UsePublicIP:              properties["USE_PUBLIC_IP"],
+		ForwarderPort:            properties["FORWARDER_PORT"],
+		ProxyTimout: 			  properties["PROXY_TIMEOUT"],
 	}, nil
 }
 
