@@ -72,7 +72,7 @@ func (ic *IBMCloudPowerVSInstallChart) Configure(ctx context.Context, cfg *envco
 		"POWERVS_SYSTEM_TYPE",
 		"USE_PUBLIC_IP",
 		"FORWARDER_PORT",
-		"PROXY_TIMEOUT"
+		"PROXY_TIMEOUT",
 	}
 	for _, k := range providerKeys {
 		if v := properties[k]; v != "" {
