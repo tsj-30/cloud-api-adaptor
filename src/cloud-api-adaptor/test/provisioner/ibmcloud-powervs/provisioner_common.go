@@ -86,26 +86,17 @@ func NewIBMCloudPowerVSProvisioner(properties map[string]string) (pv.CloudProvis
 		return nil, err
 	}
 
-	memory := properties["POWERVS_MEMORY"]
-	if memory == "" {
-		memory = "2"
-	}
-
 	return &IBMCloudPowerVSProvisioner{
 		kind:                     kind,
-		IBMCloudPowerVSAPIKey:    properties["IBMCLOUD_API_KEY"],
-		PowerVSZone:              properties["POWERVS_ZONE"],
-		PowerVSServiceInstanceId: properties["POWERVS_SERVICE_INSTANCE_ID"],
-		PowerVSImageID:           properties["POWERVS_IMAGE_ID"],
-		PowerVSNetworkID:         properties["POWERVS_NETWORK_ID"],
-		PowerVSSSHKeyName:        properties["POWERVS_SSH_KEY_NAME"],
-		PowerVSSystemType:        properties["POWERVS_SYSTEM_TYPE"],
-		PowerVSMemory:            memory,
-		PowerVSProcessorType:     properties["POWERVS_PROCESSOR_TYPE"],
-		PowerVSProcessors:        properties["POWERVS_PROCESSORS"],
+		IBMCloudPowerVSAPIKey:    IBMPowerVSProps.ApiKey,
+		PowerVSZone:              IBMPowerVSProps.PowerVSZone,
+		PowerVSServiceInstanceId: IBMPowerVSProps.PowerVSServiceInstanceID,
+		PowerVSImageID:           IBMPowerVSProps.PowerVSImageID,
+		PowerVSNetworkID:         IBMPowerVSProps.PowerVSNetworkID,
+		PowerVSSSHKeyName:        IBMPowerVSProps.PowerVSSSHKeyName,
+		PowerVSSystemType:        IBMPowerVSProps.PowerVSSystemType,
+		PowerVSMemory:            IBMPowerVSProps.PowerVSMemory,
+		PowerVSProcessorType:     IBMPowerVSProps.PowerVSProcessorType,
+		PowerVSProcessors:        IBMPowerVSProps.PowerVSProcessors,
 	}, nil
-}
-
-func InitIBMCloudPowerVSProperties(properties map[string]string) error {
-	return InitIBMCloudProperties(properties)
 }

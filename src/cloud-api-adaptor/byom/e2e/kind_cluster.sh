@@ -1,1 +1,0 @@
-../../test/provisioner/common/kind_cluster.sh

@@ -33,7 +33,7 @@ type KindCluster struct {
 func newKindCluster(properties map[string]string) (*KindCluster, error) {
 	clusterName := properties["CLUSTER_NAME"]
 	if clusterName == "" {
-		clusterName = "peer-pods"
+		clusterName = "peer-pods-e2e"
 	}
 	kindConfigFile := properties["KIND_CONFIG_FILE"]
 	if kindConfigFile == "" {

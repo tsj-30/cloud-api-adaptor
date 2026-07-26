@@ -486,6 +486,7 @@ func (b *ByomProvisioner) createKindCluster() error {
 		log.Errorf("Error creating Kind cluster: %v", err)
 		return err
 	}
+
 	return nil
 }
 
