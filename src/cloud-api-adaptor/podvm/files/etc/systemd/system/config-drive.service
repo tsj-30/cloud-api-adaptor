@@ -7,6 +7,13 @@ Type=oneshot
 RemainAfterExit=yes
 ExecCondition=/usr/local/bin/process-user-data assert-config-drive
 ExecStart=/usr/bin/mkdir -p /media/cidata
-ExecStart=/usr/bin/udevadm wait --timeout=15 /dev/disk/by-label/cidata
-ExecStart=/bin/mount -t iso9660 -o ro /dev/disk/by-label/cidata /media/cidata
+ExecStart=/bin/bash -c '\
+    if /usr/bin/udevadm wait --timeout=15 /dev/disk/by-label/cidata 2>/dev/null; then \
+        LABEL=cidata; \
+    elif /usr/bin/udevadm wait --timeout=15 /dev/disk/by-label/config-2 2>/dev/null; then \
+        LABEL=config-2; \
+    else \
+        echo "No config drive found (tried cidata, config-2)" >&2; exit 1; \
+    fi; \
+    /bin/mount -t auto -o ro /dev/disk/by-label/$${LABEL} /media/cidata'
 ExecStop=/bin/umount /media/cidata
