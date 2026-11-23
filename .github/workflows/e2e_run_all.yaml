@@ -40,6 +40,12 @@ on:
         required: true
       AZURE_CLIENT_ID:
         required: true
+      IBMCLOUD_API_KEY:
+        required: false
+      IBMCLOUD_ACCOUNT_ID:
+        required: false
+      POWERVS_SSH_KEY_NAME:
+        required: false
 
 env:
   # cloud-api-adaptor image registry
@@ -270,6 +276,25 @@ jobs:
       git_ref: ${{ inputs.git_ref }}
       peerpod_ctrl_image: ${{ inputs.registry }}/peerpod-ctrl:${{ inputs.caa_image_tag }}-amd64
       webhook_image: ${{ inputs.registry }}/peer-pods-webhook:${{ inputs.caa_image_tag }}
+
+  # Run IBM Cloud PowerVS e2e tests if pull request labeled 'test_e2e_ibmcloud_powervs'
+  ibmcloud_powervs:
+    name: ibmcloud-powervs
+    if: |
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.labels.*.name, 'test_e2e_ibmcloud_powervs')
+    needs: [webhook_image]
+    uses: $/.github/workflows/e2e_ibmcloud_powervs.yaml
+    with:
+      caa_image: ${{ inputs.registry }}/cloud-api-adaptor:${{ inputs.caa_image_tag }}-dev-amd64
+      git_ref: ${{ inputs.git_ref }}
+      peerpod_ctrl_image: ${{ inputs.registry }}/peerpod-ctrl:${{ inputs.caa_image_tag }}-amd64
+      webhook_image: ${{ inputs.registry }}/peer-pods-webhook:${{ inputs.caa_image_tag }}
+    secrets:
+      IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }}
+      IBMCLOUD_ACCOUNT_ID: ${{ secrets.IBMCLOUD_ACCOUNT_ID }}
+      POWERVS_SSH_KEY_NAME: ${{ secrets.POWERVS_SSH_KEY_NAME }}
 
   # Run Azure e2e tests when triggered by schedule or workflow dispatch
   azure:
