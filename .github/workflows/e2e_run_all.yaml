@@ -284,7 +284,7 @@ jobs:
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       contains(github.event.pull_request.labels.*.name, 'test_e2e_ibmcloud_powervs')
-    needs: [caa_image_amd64, peerpod_ctrl_image_amd64, webhook_image]
+    needs: [webhook_image]
     uses: $/.github/workflows/e2e_ibmcloud_powervs.yaml
     with:
       caa_image: ${{ inputs.registry }}/cloud-api-adaptor:${{ inputs.caa_image_tag }}-dev-amd64
