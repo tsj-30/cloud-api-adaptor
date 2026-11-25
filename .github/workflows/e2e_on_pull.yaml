@@ -40,7 +40,8 @@ jobs:
      contains(github.event.pull_request.labels.*.name, 'test_e2e_aws') ||
      contains(github.event.pull_request.labels.*.name, 'test_e2e_alibabacloud') ||
      contains(github.event.pull_request.labels.*.name, 'test_e2e_libvirt') ||
-     contains(github.event.pull_request.labels.*.name, 'test_e2e_byom')
+     contains(github.event.pull_request.labels.*.name, 'test_e2e_byom') ||
+     contains(github.event.pull_request.labels.*.name, 'test_e2e_ibmcloud_powervs')
     steps:
       - run: "true"
   e2e:
@@ -62,6 +63,9 @@ jobs:
       ALIBABA_CLOUD_ROLE_ARN: ${{ secrets.ALIBABA_CLOUD_ROLE_ARN }}
       ALIBABA_CLOUD_OIDC_PROVIDER_ARN: ${{ secrets.ALIBABA_CLOUD_OIDC_PROVIDER_ARN }}
       REGISTRY_CREDENTIAL_ENCODED: ${{ secrets.REGISTRY_CREDENTIAL_ENCODED }}
+      IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }}
+      IBMCLOUD_ACCOUNT_ID: ${{ secrets.IBMCLOUD_ACCOUNT_ID }}
+      POWERVS_SSH_KEY_NAME: ${{ secrets.POWERVS_SSH_KEY_NAME }}
       # Dummy values, since pull-request-target should not have access to upstream secrets
       AZURE_CLIENT_ID: ''
       AZURE_SUBSCRIPTION_ID: ''
